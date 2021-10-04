@@ -14,7 +14,7 @@ var db *gorm.DB
 
 func Connect() {
 	godotenv.Load()
-	d, err := gorm.Open("postgres", os.Getenv("DB_URI"))
+	d, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	} else {
