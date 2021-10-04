@@ -2,10 +2,11 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/judennadi/bookstore/pkg/config"
+	"github.com/judennadi/bookstore/config"
 )
 
 var db *gorm.DB
+var dg *gorm.Scope
 
 type Book struct {
 	gorm.Model
@@ -15,6 +16,7 @@ type Book struct {
 }
 
 func init() {
+	// dg.SetColumn()
 	config.Connect()
 	db = config.GetDB()
 	db.AutoMigrate(&Book{})

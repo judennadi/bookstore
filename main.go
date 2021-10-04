@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/judennadi/bookstore/pkg/routes"
+	"github.com/judennadi/bookstore/routes"
 )
 
 func main() {

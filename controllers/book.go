@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/judennadi/bookstore/pkg/models"
-	"github.com/judennadi/bookstore/pkg/utils"
+	"github.com/judennadi/bookstore/models"
+	"github.com/judennadi/bookstore/utils"
 )
 
 // var NewBook models.Book

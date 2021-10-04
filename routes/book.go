@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/judennadi/bookstore/pkg/controllers"
+	"github.com/judennadi/bookstore/controllers"
 )
 
 // var router = mux.NewRouter().StrictSlash(true)
