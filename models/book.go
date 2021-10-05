@@ -1,31 +1,47 @@
 package models
 
 import (
+	"time"
+
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/judennadi/bookstore/config"
 )
 
 var db *gorm.DB
-var dg *gorm.Scope
+
+type Model struct {
+	ID        uuid.UUID `gorm:"type:uuid;primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+}
+
+// BeforeCreate will set a UUID rather than numeric ID.
+func (model *Model) BeforeCreate(scope *gorm.Scope) error {
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+	return scope.SetColumn("ID", uuid)
+}
 
 type Book struct {
-	gorm.Model
+	Model
 	Name        string `json:"name"`
 	Author      string `json:"author"`
 	Publication string `json:"publication"`
 }
 
 func init() {
-	// dg.SetColumn()
 	config.Connect()
 	db = config.GetDB()
 	db.AutoMigrate(&Book{})
 }
 
 func (b *Book) CreateBook() *Book {
-	if db.NewRecord(b) {
-		db.Create(&b)
-	}
+	db.NewRecord(b)
+	db.Create(&b)
 	return b
 }
 
