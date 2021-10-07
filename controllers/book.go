@@ -11,8 +11,6 @@ import (
 	"github.com/judennadi/bookstore/utils"
 )
 
-// var NewBook models.Book
-
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	newBooks := models.GetBooks()
 	w.WriteHeader(http.StatusOK)
@@ -22,7 +20,28 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	book := &models.Book{}
 	utils.ParseBody(r, book)
-	newBook := book.CreateBook()
+	if book.Name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Name must not be blank"})
+		return
+	} else if book.Author == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Author must not be blank"})
+		return
+	} else if book.Publication == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Publication must not be blank"})
+		return
+	}
+	newBook, err := book.CreateBook()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errName := utils.HandleDuplicateError(err)
+
+		message := fmt.Sprintf("%v already exist", errName)
+		json.NewEncoder(w).Encode(map[string]string{"error": message})
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newBook)
 }

@@ -28,9 +28,9 @@ func (model *Model) BeforeCreate(scope *gorm.Scope) error {
 
 type Book struct {
 	Model
-	Name        string `json:"name"`
-	Author      string `json:"author"`
-	Publication string `json:"publication"`
+	Name        string `json:"name" gorm:"not null;unique"`
+	Author      string `json:"author" gorm:"not null"`
+	Publication string `json:"publication" gorm:"not null"`
 }
 
 func init() {
@@ -39,10 +39,9 @@ func init() {
 	db.AutoMigrate(&Book{})
 }
 
-func (b *Book) CreateBook() *Book {
-	db.NewRecord(b)
-	db.Create(&b)
-	return b
+func (b *Book) CreateBook() (*Book, error) {
+	result := db.Create(&b)
+	return b, result.Error
 }
 
 func GetBooks() []Book {
