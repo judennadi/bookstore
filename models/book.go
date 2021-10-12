@@ -36,7 +36,7 @@ type Book struct {
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	db.AutoMigrate(&Book{})
+	db.AutoMigrate(&Book{}, &User{})
 }
 
 func (b *Book) CreateBook() (*Book, error) {
@@ -50,13 +50,13 @@ func GetBooks() []Book {
 	return Books
 }
 
-func GetBook(id int64) (*Book, *gorm.DB) {
+func GetBook(id string) (*Book, *gorm.DB) {
 	var getBook Book
 	db := db.Where("ID=?", id).Find(&getBook)
 	return &getBook, db
 }
 
-func DeleteBook(id int64) Book {
+func DeleteBook(id string) Book {
 	var book Book
 	db.Where("ID=?", id).Delete(book)
 	return book

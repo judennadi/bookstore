@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/judennadi/bookstore/models"
@@ -13,6 +12,8 @@ import (
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	newBooks := models.GetBooks()
+	nb := newBooks[0]
+	fmt.Printf("%T", nb.ID)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(newBooks)
 }
@@ -48,11 +49,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 func GetBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	bookId, err := strconv.ParseInt(id, 0, 0)
-	if err != nil {
-		fmt.Println("error while parsing book id")
-	}
-	book, _ := models.GetBook(bookId)
+	book, _ := models.GetBook(id)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(book)
 }
@@ -61,11 +58,7 @@ func EditBook(w http.ResponseWriter, r *http.Request) {
 	newBook := &models.Book{}
 	utils.ParseBody(r, newBook)
 	id := mux.Vars(r)["id"]
-	bookId, err := strconv.ParseInt(id, 0, 0)
-	if err != nil {
-		fmt.Println("error while parsing book id")
-	}
-	oldBook, db := models.GetBook(bookId)
+	oldBook, db := models.GetBook(id)
 	if newBook.Name != "" {
 		oldBook.Name = newBook.Name
 	}
@@ -82,11 +75,11 @@ func EditBook(w http.ResponseWriter, r *http.Request) {
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	bookId, err := strconv.ParseInt(id, 0, 0)
-	if err != nil {
-		fmt.Println("error while parsing book id")
-	}
-	book := models.DeleteBook(bookId)
+	// bookId, err := strconv.ParseInt(id, 0, 0)
+	// if err != nil {
+	// 	fmt.Println("error while parsing book id")
+	// }
+	book := models.DeleteBook(id)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(book)
 }
