@@ -15,7 +15,6 @@ func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		godotenv.Load()
 		var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
-		// fmt.Println("Auth: ", r.URL)
 		token, err := r.Cookie("token")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -40,7 +39,6 @@ func Auth(next http.Handler) http.Handler {
 
 func CheckAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// fmt.Println("Check Auth: ", r.URL)
 		next.ServeHTTP(w, r)
 	})
 }

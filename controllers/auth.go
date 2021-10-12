@@ -28,6 +28,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := reqBody.HashPassword(); err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": "Couldn't hash password"})
+		return
+	}
+
 	newUser, err := reqBody.CreateUser()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -66,10 +71,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	newUser := models.GetUserByEmail(reqBody.Email)
 	if newUser.Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "User does not exist"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Incorrect username or password"})
 		return
 	}
-	if newUser.Password != reqBody.Password {
+
+	if err := newUser.ComparePassword(reqBody.Password); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Incorrect username or password"})
 		return
@@ -77,10 +83,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	token, jwtErr := utils.GenerateJWT(newUser.Email)
 	if jwtErr != nil {
-		json.NewEncoder(w).Encode(jwtErr)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Couldn't generate token"})
 		return
 	}
-	cookie := &http.Cookie{Name: "token", Value: token, HttpOnly: true, Expires: time.Now().Add(time.Minute * 5)}
+	cookie := &http.Cookie{Name: "token", Value: token, HttpOnly: true, Expires: time.Now().Add(time.Hour * 12)}
 	http.SetCookie(w, cookie)
 	json.NewEncoder(w).Encode(map[string]interface{}{"user": newUser})
 

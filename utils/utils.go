@@ -51,7 +51,7 @@ func GenerateJWT(email string) (string, error) {
 	newJwt := jwt.New(jwt.SigningMethodHS256)
 	claims := newJwt.Claims.(jwt.MapClaims)
 	claims["email"] = email
-	claims["exp"] = time.Now().Add(time.Minute * 5).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 12).Unix()
 
 	token, err := newJwt.SignedString(jwtSecret)
 	if err != nil {

@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -12,9 +13,19 @@ type User struct {
 	Password string `json:"password" gorm:"not null"`
 }
 
-// func (u *User) HashPassword() (string, error){
-// 	bcryt
-// }
+func (u *User) HashPassword() error {
+	passwordByte, err := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
+	if err != nil {
+		return err
+	}
+	u.Password = string(passwordByte)
+	return nil
+}
+
+func (u *User) ComparePassword(password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err
+}
 
 func (u *User) CreateUser() (*User, error) {
 	result := db.Create(&u)
