@@ -19,7 +19,7 @@ func main() {
 	routes.FoodRoutes()
 	routes.AuthRoutes(router)
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "<h1>Welcome</h1>")
+		fmt.Fprint(w, "<h1>Welcome!</h1>")
 	})
 	router.HandleFunc("/register", controllers.Register).Methods("POST")
 	router.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {})
